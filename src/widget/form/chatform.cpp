@@ -1025,6 +1025,8 @@ OfflineMsgEngine *ChatForm::getOfflineMsgEngine()
 
 void ChatForm::SendMessageStr(QString msg)
 {
+    msg = msg.trimmed();
+    
     if (msg.isEmpty())
         return;
 
