@@ -17,6 +17,10 @@
     along with qTox.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+extern "C" {
+    #include <mkdio.h>
+}
+
 #include "chatmessage.h"
 #include "chatlinecontentproxy.h"
 #include "content/text.h"
@@ -38,6 +42,26 @@ ChatMessage::ChatMessage()
 
 }
 
+QString markdown(QString in) {
+    const char * text = in.toLatin1().data();
+    QString out = QString();
+    
+    mkd_flag_t flags = 0;
+    
+    // mkd_with_html5_tags();
+    
+    MMIOT * doc = mkd_string(text, strlen(text), flags);
+    
+    if (mkd_compile(doc, flags)) {
+        char * html;
+        int len = mkd_document(doc, &html);
+        
+        out = out.fromLatin1(html, len);
+    }
+    mkd_cleanup(doc);
+    
+    return out;
+}
 ChatMessage::Ptr ChatMessage::createChatMessage(const QString &sender, const QString &rawMessage, MessageType type, bool isMe, const QDateTime &date)
 {
     ChatMessage::Ptr msg = ChatMessage::Ptr(new ChatMessage);
@@ -65,7 +89,7 @@ ChatMessage::Ptr ChatMessage::createChatMessage(const QString &sender, const QSt
         text = wrapDiv(text, "alert");
         break;
     default:
-        text = wrapDiv(text, "msg");
+        text = wrapDiv(markdown(text), "msg");
     }
 
     // Note: Eliding cannot be enabled for RichText items. (QTBUG-17207)

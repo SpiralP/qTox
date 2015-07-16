@@ -16,6 +16,7 @@
 #
 #    See the COPYING file for more details.
 
+LIBS += -lmarkdown
 
 QT       += core gui network xml opengl sql svg
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
