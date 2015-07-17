@@ -43,14 +43,17 @@ ChatMessage::ChatMessage()
 }
 
 QString markdown(QString in) {
-    const char * text = in.toLatin1().data();
+    char * text = in.toLatin1().data();
     QString out = QString();
     
-    mkd_flag_t flags = 0;
+    char * html;
+    int len = mkd_line(text, strlen(text), &html, 0);
+    if (len>0)
+        out = out.fromLatin1(html, len);
     
     // mkd_with_html5_tags();
     
-    MMIOT * doc = mkd_string(text, strlen(text), flags);
+    /*MMIOT * doc = mkd_string(text, strlen(text), flags);
     
     if (mkd_compile(doc, flags)) {
         char * html;
@@ -58,7 +61,7 @@ QString markdown(QString in) {
         
         out = out.fromLatin1(html, len);
     }
-    mkd_cleanup(doc);
+    mkd_cleanup(doc);*/
     
     return out;
 }
