@@ -48,7 +48,7 @@ QString markdown(QString in) {
     
     int flags = MKD_NOHTML;
     
-    MMIOT * doc = mkd_string(data.constData(), data.size(), flags);
+    MMIOT * doc = gfm_string(data.constData(), data.size(), flags);
     if (doc == NULL) {
         return out;
     }
