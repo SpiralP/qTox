@@ -43,7 +43,7 @@ ChatMessage::ChatMessage()
 }
 
 QString markdown(QString in) {
-    QByteArray data = in.toLatin1();
+    QByteArray data = in.toUtf8();
     QString out = QString();
     
     int flags = MKD_NOHTML;
@@ -56,7 +56,7 @@ QString markdown(QString in) {
     if (mkd_compile(doc, flags)) {
         char * html;
         int len = mkd_document(doc, &html);
-        out = out.fromLatin1(html, len);
+        out = out.fromUtf8(html, len);
     }
     
     mkd_cleanup(doc);
