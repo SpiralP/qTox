@@ -1,7 +1,6 @@
 div.msg {
   color: @black;
   font: @big;
-  white-space: pre;
 }
 
 div.action {
