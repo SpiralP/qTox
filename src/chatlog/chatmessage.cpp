@@ -43,25 +43,23 @@ ChatMessage::ChatMessage()
 }
 
 QString markdown(QString in) {
-    char * text = in.toLatin1().data();
+    QByteArray data = in.toLatin1();
     QString out = QString();
     
-    char * html;
-    int len = mkd_line(text, strlen(text), &html, 0);
-    if (len>0)
-        out = out.fromLatin1(html, len);
+    int flags = MKD_NOHTML;
     
-    // mkd_with_html5_tags();
-    
-    /*MMIOT * doc = mkd_string(text, strlen(text), flags);
-    
+    MMIOT * doc = mkd_string(data.constData(), data.size(), flags);
+    if (doc == NULL) {
+        return out;
+    }
+
     if (mkd_compile(doc, flags)) {
         char * html;
         int len = mkd_document(doc, &html);
-        
         out = out.fromLatin1(html, len);
     }
-    mkd_cleanup(doc);*/
+    
+    mkd_cleanup(doc);
     
     return out;
 }
@@ -69,7 +67,15 @@ ChatMessage::Ptr ChatMessage::createChatMessage(const QString &sender, const QSt
 {
     ChatMessage::Ptr msg = ChatMessage::Ptr(new ChatMessage);
 
-    QString text = rawMessage.toHtmlEscaped();
+    QString text = rawMessage;
+    if (text.at(0)=='>')
+        text.replace(0, 1, "&gt;");
+    
+    if (type == ACTION)
+        text = QString("%1 %2").arg(sender, text);
+    
+    text = markdown(text);
+    
     QString senderText = sender;
 
     const QColor actionColor = QColor("#1818FF"); // has to match the color in innerStyle.css (div.action)
@@ -78,21 +84,24 @@ ChatMessage::Ptr ChatMessage::createChatMessage(const QString &sender, const QSt
     if (Settings::getInstance().getUseEmoticons())
         text = SmileyPack::getInstance().smileyfied(text);
 
+    //url links
+    text = detectAnchors(text);
+
     //quotes (green text)
-    text = detectQuotes(detectAnchors(text), type);
+    //text = detectQuotes(text, type);
 
     switch(type)
     {
     case ACTION:
         senderText = "*";
-        text = wrapDiv(QString("%1 %2").arg(sender, text), "action");
+        text = wrapDiv(text, "action");
         msg->setAsAction();
         break;
     case ALERT:
         text = wrapDiv(text, "alert");
         break;
     default:
-        text = wrapDiv(markdown(text), "msg");
+        text = wrapDiv(text, "msg");
     }
 
     // Note: Eliding cannot be enabled for RichText items. (QTBUG-17207)
