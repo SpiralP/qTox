@@ -1023,9 +1023,18 @@ OfflineMsgEngine *ChatForm::getOfflineMsgEngine()
     return offlineEngine;
 }
 
+QString trimEnd(const QString& str) {
+    int n = str.size() - 1;
+    for (; n >= 0; --n) {
+        if (!str.at(n).isSpace()) {
+            return str.left(n + 1);
+        }
+    }
+    return "";
+}
 void ChatForm::SendMessageStr(QString msg)
 {
-    msg = msg.trimmed();
+    msg = trimEnd(msg);
     
     if (msg.isEmpty())
         return;
