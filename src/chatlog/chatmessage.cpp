@@ -46,7 +46,7 @@ QString markdown(QString in) {
     QByteArray data = in.toUtf8();
     QString out = QString();
     
-    int flags = MKD_NOHTML;
+    int flags = 0; // MKD_NOHTML;
     
     MMIOT * doc = gfm_string(data.constData(), data.size(), flags);
     if (doc == NULL) {
@@ -71,6 +71,10 @@ ChatMessage::Ptr ChatMessage::createChatMessage(const QString &sender, const QSt
     if (text.at(0)=='>')
         text.replace(0, 1, "&gt;");
     
+    //url links
+    text = detectAnchors(text);
+    
+    
     if (type == ACTION)
         text = QString("%1 %2").arg(sender, text);
     
@@ -83,9 +87,6 @@ ChatMessage::Ptr ChatMessage::createChatMessage(const QString &sender, const QSt
     //smileys
     if (Settings::getInstance().getUseEmoticons())
         text = SmileyPack::getInstance().smileyfied(text);
-
-    //url links
-    text = detectAnchors(text);
 
     //quotes (green text)
     //text = detectQuotes(text, type);
