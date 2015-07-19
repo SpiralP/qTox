@@ -68,28 +68,25 @@ ChatMessage::Ptr ChatMessage::createChatMessage(const QString &sender, const QSt
     ChatMessage::Ptr msg = ChatMessage::Ptr(new ChatMessage);
 
     QString text = rawMessage;
-    if (text.at(0)=='>')
-        text.replace(0, 1, "&gt;");
-    
-    //url links
-    text = detectAnchors(text);
-    
-    
-    if (type == ACTION)
-        text = QString("%1 %2").arg(sender, text);
-    
-    text = markdown(text);
-    
-    QString senderText = sender;
-
-    const QColor actionColor = QColor("#1818FF"); // has to match the color in innerStyle.css (div.action)
 
     //smileys
     if (Settings::getInstance().getUseEmoticons())
         text = SmileyPack::getInstance().smileyfied(text);
 
-    //quotes (green text)
-    //text = detectQuotes(text, type);
+    //url links
+    text = detectAnchors(text);
+
+    if (type == ACTION)
+        text = QString("%1 %2").arg(sender, text);
+
+    if (text.at(0)=='>')
+        text.replace(0, 1, "&gt;");
+
+    text = markdown(text);
+
+    QString senderText = sender;
+
+    const QColor actionColor = QColor("#1818FF"); // has to match the color in innerStyle.css (div.action)
 
     switch(type)
     {
