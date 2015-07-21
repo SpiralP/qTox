@@ -35,3 +35,4 @@ a {
     color: blue;
 }
 
+del { text-decoration: line-through; }
