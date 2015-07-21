@@ -46,7 +46,7 @@ QString markdown(QString in) {
     QByteArray data = in.toUtf8();
     QString out = QString();
     
-    int flags = 0; // MKD_NOHTML;
+    int flags = MKD_NOPANTS;
     
     MMIOT * doc = gfm_string(data.constData(), data.size(), flags);
     if (doc == NULL) {
