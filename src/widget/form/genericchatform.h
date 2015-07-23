@@ -27,6 +27,7 @@
 #include "src/core/corestructs.h"
 #include "src/chatlog/chatmessage.h"
 #include "../../core/toxid.h"
+#include "src/widget/emoticonswidget.h"
 
 // Spacing in px inserted when the author of the last message changes
 #define AUTHOR_CHANGE_SPACING 5 // why the hell is this a thing? surely the different font is enough?
@@ -88,6 +89,7 @@ protected slots:
 
 private:
     void retranslateUi();
+    EmoticonsWidget * emoticonsWidget;
 
 protected:
     QString resolveToxId(const ToxId &id);

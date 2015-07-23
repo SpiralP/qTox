@@ -192,6 +192,14 @@ GenericChatForm::GenericChatForm(QWidget *parent)
 
     retranslateUi();
     Translator::registerHandler(std::bind(&GenericChatForm::retranslateUi, this), this);
+    
+    // only show the smiley selection widget if there are smileys available
+    if (!SmileyPack::getInstance().getEmoticons().empty()) {
+        emoticonsWidget = new EmoticonsWidget(this);
+        connect(emoticonsWidget, SIGNAL(insertEmoticon(QString)), this, SLOT(onEmoteInsertRequested(QString)));
+    } else {
+        emoticonsWidget = nullptr;
+    }
 }
 
 GenericChatForm::~GenericChatForm()
@@ -338,18 +346,16 @@ void GenericChatForm::addAlertMessage(const ToxId &author, QString message, QDat
 
 void GenericChatForm::onEmoteButtonClicked()
 {
-    // don't show the smiley selection widget if there are no smileys available
-    if (SmileyPack::getInstance().getEmoticons().empty())
+    if (!emoticonsWidget)
         return;
 
-    EmoticonsWidget widget;
-    connect(&widget, SIGNAL(insertEmoticon(QString)), this, SLOT(onEmoteInsertRequested(QString)));
-
+    emoticonsWidget->show();
+    
     QWidget* sender = qobject_cast<QWidget*>(QObject::sender());
     if (sender)
     {
-        QPoint pos = -QPoint(widget.sizeHint().width() / 2, widget.sizeHint().height()) - QPoint(0, 10);
-        widget.exec(sender->mapToGlobal(pos));
+        QPoint pos = -QPoint(emoticonsWidget->sizeHint().width() / 2, emoticonsWidget->sizeHint().height()) - QPoint(0, 10);
+        emoticonsWidget->exec(sender->mapToGlobal(pos));
     }
 }
 
