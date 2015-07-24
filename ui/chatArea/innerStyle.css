@@ -32,7 +32,14 @@ div.alert_name {
 }
 
 a {
-    color: blue;
+  color: blue;
 }
 
-del { text-decoration: line-through; }
+del {
+  text-decoration: line-through;
+}
+
+code {
+  padding: 2px;
+  background-color: #eee;
+}
