@@ -43,3 +43,11 @@ code {
   padding: 2px;
   background-color: #eee;
 }
+
+u, .underline {
+  text-decoration: underline;
+}
+
+.overline {
+  text-decoration: overline;
+}
